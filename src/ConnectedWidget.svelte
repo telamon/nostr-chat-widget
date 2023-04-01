@@ -109,7 +109,7 @@
         } else {
             // insert message so that it's chronologically ordered by created_at
             let index = 0;
-            while (index < events.length && events[index].created_at < message.created_at) {
+            while (index < events.length && events[index].created_at > message.created_at) {
                 index++;
             }
             events.splice(index, 0, message);
@@ -122,19 +122,12 @@
     }
 
     function scrollDown() {
+        return
         animateScroll.scrollToBottom({
             container: document.getElementById('messages-container'),
             offset: 999999, // hack, oh well, browsers suck
             duration: 50
         })
-    }
-
-    function zapReceived(zap) {
-        const event = events.find(event => event.id === zap.zappedEvent);
-        if (!event) { return; }
-
-        if (!$zapsPerMessage[event.id]) $zapsPerMessage[event.id] = [];
-        $zapsPerMessage[event.id].push(zap);
     }
 
     function reactionReceived(reaction) {
@@ -156,7 +149,6 @@
         })
 
         $chatAdapter.on('reaction', reactionReceived);
-        $chatAdapter.on('zap', zapReceived);
         $chatAdapter.on('deleted', (deletedEvents) => {
             deletedEvents.forEach(deletedEventId => {
                 const index = events.findIndex(event => event.id === deletedEventId);
@@ -224,13 +216,7 @@
 
 </script>
 
-<div class="
-    bg-purple-700 text-white
-    -mx-4 -mt-5 mb-3
-    px-4 py-3
-    overflow-clip
-    flex flex-row justify-between items-center
-">
+<div class="guestbook flex col start">
 
     <div class="text-lg font-semibold">
         {#if $chatAdapter?.pubkey}
@@ -238,14 +224,12 @@
         {/if}
     </div>
 
-    <span class="text-xs flex flex-col items-end mt-2 text-gray-200 gap-1">
+    <span class="connectedness">
         <div class="flex flex-row gap-1 overflow-clip">
             {#each Array(totalRelays) as _, i}
                 <span class="
-                    inline-block
-                    rounded-full
-                    {connectedRelays > i ? 'bg-green-500' : 'bg-gray-300'}
-                    w-2 h-2
+                    plupp
+                    {connectedRelays > i ? 'online' : 'offline'}
                 "></span>
             {/each}
         </div>
@@ -273,60 +257,49 @@
     </div>
     {/if}
 {/if}
-
-<div id="messages-container" class="overflow-auto -mx-4 px-4" style="height: 50vh; min-height: 300px;">
-    <div id="messages-container-inner" class="flex flex-col gap-4">
-        {#if $selectedMessage}
-            <NostrNote event={getEventById($selectedMessage)} {responses} {websiteOwnerPubkey} />
-        {:else}
-            {#each events as event}
-                <NostrNote {event} {responses} {websiteOwnerPubkey} />
-                {#if event.deleted}
-                    👆 deleted
-                {/if}
-            {/each}
-        {/if}
-    </div>
-</div>
-
-
-<div class="flex flex-col">
-    <div class="
-        border-y border-y-slate-200
-        -mx-4 my-2 bg-slate-100 text-black text-sm
-        px-4 py-2
-    ">
-        {#if chatConfiguration.chatType === 'DM'}
-            <b>Encrypted chat:</b>
-            only your chat partner can see these messages.
-        {:else}
-            <b>Public chat:</b>
-            anyone can see these messages.
-        {/if}
-    </div>
-
-    <div class="flex flex-row gap-2 -mx-1">
+<div>
+    <!--
+        <div class="
+            border-y border-y-slate-200
+            -mx-4 my-2 bg-slate-100 text-black text-sm
+            px-4 py-2
+        ">
+            {#if chatConfiguration.chatType === 'DM'}
+                <b>Encrypted chat:</b>
+                only your chat partner can see these messages.
+            {:else}
+                <b>Public chat:</b>
+                anyone can see these messages.
+            {/if}
+        </div>
+    -->
+    <div class="">
         <textarea
             type="text"
             id="message-input"
-            class="
-                -mb-2
-                p-2
-                w-full
-                resize-none
-                rounded-xl
-                text-gray-600
-                border
-            " placeholder="Say hello!"
-            rows=1
+            placeholder="Tyck till!"
+            rows=4
+            style="min-width: 300px;"
             on:keydown={inputKeyDown}
         ></textarea>
-        <button type="button" class="inline-flex items-center rounded-full border border-transparent bg-purple-700 p-3 text-white shadow-sm hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2" on:click|preventDefault={sendMessage}>
-            <!-- Heroicon name: outline/plus -->
-            <svg aria-hidden="true" class="w-6 h-6 rotate-90" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"></path></svg>
-        </button>
+        <button on:click|preventDefault={sendMessage}>Skicka</button>
     </div>
 </div>
+
+<div id="messages-container" class="flex col start">
+    {#if $selectedMessage}
+        <NostrNote event={getEventById($selectedMessage)} {responses} {websiteOwnerPubkey} />
+    {:else}
+        {#each events as event}
+            <NostrNote {event} {responses} {websiteOwnerPubkey} />
+            {#if event.deleted}
+                👆 deleted
+            {/if}
+        {/each}
+    {/if}
+</div>
+
+
 
 <style>
 	@tailwind base;

@@ -25,6 +25,7 @@
 	"type": "module",
 	"dependencies": {
 		"@nostr-connect/connect": "^0.2.3",
+		"@nostr-dev-kit/ndk": "^0.0.9",
 		"@rollup/plugin-commonjs": "^24.0.1",
 		"@rollup/plugin-json": "^6.0.0",
 		"@rollup/plugin-typescript": "^11.0.0",
@@ -35,7 +36,6 @@
 		"eventemitter3": "^5.0.0",
 		"light-bolt11-decoder": "^3.0.0",
 		"nostr": "^0.2.7",
-		"nostr-dev-kit": "file:../../nostr/ndk/nostr-dev-kit",
 		"nostr-tools": "^1.2.1",
 		"rollup-plugin-css-only": "^4.3.0",
 		"rollup-plugin-esformatter": "^3.0.0",

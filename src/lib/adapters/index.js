@@ -5,7 +5,7 @@ import { createEventDispatcher } from 'svelte';
 import EventEmitter from 'events';
 import * as uuid from 'uuid';
 import debug from 'debug';
-import { NDKEvent, zapInvoiceFromEvent } from 'nostr-dev-kit';
+// import { NDKEvent, zapInvoiceFromEvent } from 'nostr-dev-kit';
 
 const log = new debug('nostr:adapter');
 const profilesLog = new debug('nostr:adapter:profiles');
@@ -236,13 +236,6 @@ class NstrAdapter {
         let deletedEvents = []
         if (event.kind === 5) {
             deletedEvents = event.tags.filter(tag => tag[0] === 'e').map(tag => tag[1]);
-        }
-
-        let zap;
-        if (event.kind === 9735) {
-            const ndkEvent = new NDKEvent(null, event);
-            zap = zapInvoiceFromEvent(ndkEvent);
-            console.log(`received a zap invoice: ${zap}`, event);
         }
 
         switch (event.kind) {
