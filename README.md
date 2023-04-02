@@ -1,3 +1,11 @@
+HEADS UP!
+=========
+This fork was (ab)used for a 0day-hack - with a sledge-hammer...  
+Head over to the original author's repo instead:
+https://github.com/pablof7z/nostr-chat-widget
+
+_Thank you for letting me borrow your code._ 🙏
+
 # What is NostriChat?
 Nostri.chat is a chat widget you can easily embed in websites.
 
